@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1020">
+  <title>MessPro — Bangladeshi Mess Management System</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <noscript>
+    <div class="noscript-msg">Please enable JavaScript to use MessPro.</div>
+  </noscript>
+
+  <!-- ================= LOGIN ================= -->
+  <div id="loginScreen" class="login-screen hidden">
+    <div class="bg-blobs"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+    <div class="login-card glass anim-pop">
+      <div class="brand-logo">🍽️</div>
+      <h1>MessPro</h1>
+      <p class="bangla-sub">বাংলাদেশি মেস ম্যানেজমেন্ট সিস্টেম</p>
+
+      <form id="loginForm" autocomplete="off">
+        <div class="field">
+          <label for="loginPassword">Manager Password <span class="req">*</span></label>
+          <input type="password" id="loginPassword" placeholder="Enter manager password" required>
+        </div>
+        <label class="switch-row">
+          <input type="checkbox" id="rememberMe" checked>
+          <span>Remember login on this device</span>
+        </label>
+        <button type="submit" class="btn btn-primary btn-block">Login</button>
+      </form>
+
+      <p class="hint" id="defaultHint">Default password: <code>admin123</code> — change it in Settings.</p>
+      <button type="button" class="link-btn" id="openPasswordModal">Change Password</button>
+    </div>
+  </div>
+
+  <!-- ================= APP ================= -->
+  <div id="app" class="app hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar glass">
+      <div class="side-brand">
+        <span class="brand-logo sm">🍽️</span>
+        <div>
+          <strong>MessPro</strong>
+          <small id="sideMessName">My Mess</small>
+        </div>
+      </div>
+
+      <nav class="side-nav">
+        <button class="nav-item active" data-page="dashboard">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-page="members">
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Members</span>
+          <em class="nav-count" id="navMembersCount">0</em>
+        </button>
+        <button class="nav-item" data-page="meals">
+          <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          <span>Meals</span>
+        </button>
+        <button class="nav-item" data-page="guests">
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+          <span>Guests</span>
+        </button>
+        <button class="nav-item" data-page="deposits">
+          <svg viewBox="0 0 24 24"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>
+          <span>Deposits</span>
+        </button>
+        <button class="nav-item" data-page="expenses">
+          <svg viewBox="0 0 24 24"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2V2l-3 2-3-2-3 2-3-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+          <span>Expenses</span>
+        </button>
+        <button class="nav-item" data-page="reports">
+          <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 4 4 5-6"/></svg>
+          <span>Reports</span>
+        </button>
+        <button class="nav-item" data-page="settings">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82.33l.06.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="side-foot">
+        <div class="side-balance glass">
+          <small>Current Balance · বর্তমান ব্যালেন্স</small>
+          <strong id="sideBalance">৳ 0</strong>
+        </div>
+        <p class="side-copy">v1.0 · LocalStorage only</p>
+      </div>
+    </aside>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- Main -->
+    <div class="main">
+      <header class="topbar glass">
+        <button class="icon-btn" id="menuBtn" title="Menu">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <div class="topbar-title">
+          <h2 id="pageTitle">Dashboard</h2>
+          <span id="todayLabel" class="sub"></span>
+        </div>
+        <div class="topbar-actions">
+          <span id="savedFlash" class="saved-flash">Saved ✓</span>
+          <button class="icon-btn" id="themeBtn" title="Toggle dark mode">
+            <svg id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+          <div class="user-chip">
+            <span class="avatar" id="avatarLetter">M</span>
+            <span id="managerNameTop">Manager</span>
+          </div>
+          <button class="btn btn-sm btn-ghost" id="logoutBtn">Logout</button>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <!-- ============ DASHBOARD ============ -->
+        <section id="page-dashboard" class="page">
+          <div class="page-head">
+            <div>
+              <h2>Dashboard</h2>
+              <p class="sub">মেসের সামগ্রিক চিত্র · <span id="dashMonthLabel"></span></p>
+            </div>
+            <div class="page-actions no-print">
+              <button class="btn btn-sm" id="btnQuickMeal">+ Meal Entry</button>
+              <button class="btn btn-sm btn-primary" id="btnQuickDeposit">+ Deposit</button>
+            </div>
+          </div>
+
+          <div class="stats-grid" id="mainStats"></div>
+
+          <h3 class="section-title">Monthly Statistics <span class="section-sub">মাসিক পরিসংখ্যান</span></h3>
+          <div class="stats-grid" id="monthStats"></div>
+
+          <div class="charts-grid">
+            <div class="card glass chart-card">
+              <h4>Meal Trend — Last 6 Months</h4>
+              <div class="chart-box"><canvas id="chartMeals"></canvas><p class="chart-fallback hidden">📊 Chart.js could not load (offline). Data is available in Reports.</p></div>
+            </div>
+            <div class="card glass chart-card">
+              <h4>Deposits vs Expenses</h4>
+              <div class="chart-box"><canvas id="chartMoney"></canvas><p class="chart-fallback hidden">📊 Chart.js could not load (offline). Data is available in Reports.</p></div>
+            </div>
+            <div class="card glass chart-card chart-wide">
+              <h4>Expense Distribution</h4>
+              <div class="chart-box"><canvas id="chartExpense"></canvas><p class="chart-fallback hidden">📊 Chart.js could not load (offline). Data is available in Reports.</p></div>
+            </div>
+          </div>
+
+          <div class="card glass">
+            <h4>Recent Activity</h4>
+            <div id="recentActivity" class="activity-list"></div>
+          </div>
+        </section>
+
+        <!-- ============ MEMBERS ============ -->
+        <section id="page-members" class="page hidden">
+          <div class="page-head">
+            <div>
+              <h2>Member Management</h2>
+              <p class="sub">সদস্য ব্যবস্থাপনা</p>
+            </div>
+            <div class="page-actions no-print">
+              <button class="btn btn-primary" id="btnAddMember">+ Add Member</button>
+            </div>
+          </div>
+
+          <div class="toolbar glass card">
+            <div class="field inline">
+              <input type="search" id="memberSearch" placeholder="Search name, phone, room…">
+            </div>
+            <div class="field inline">
+              <select id="memberStatusFilter">
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+            <span class="chip" id="memberCountChip">0 members</span>
+          </div>
+
+          <div class="card glass table-card">
+            <div class="table-wrap">
+              <table id="membersTable">
+                <thead>
+                  <tr>
+                    <th>#</th><th>Name</th><th>Phone</th><th>Room</th>
+                    <th>Seat Rent</th><th>Deposit</th><th>Meals</th><th>Status</th><th class="no-print">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="membersBody"></tbody>
+              </table>
+            </div>
+            <div class="table-foot">
+              <div class="table-info" id="membersInfo"></div>
+              <div class="pagination" id="membersPagination"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ MEALS ============ -->
+        <section id="page-meals" class="page hidden">
+          <div class="page-head">
+            <div>
+              <h2>Meal Entry</h2>
+              <p class="sub">খাবার এন্ট্রি · Breakfast, Lunch &amp; Dinner</p>
+            </div>
+            <div class="page-actions no-print">
+              <span class="chip" id="mealRateChip">Meal Rate: ৳ 0</span>
+            </div>
+          </div>
+
+          <div class="tabs no-print">
+            <button class="tab active" data-view="daily">Daily Entry</button>
+            <button class="tab" data-view="monthly">Monthly Summary</button>
+          </div>
+
+          <!-- Daily -->
+          <div id="mealsDaily">
+            <div class="toolbar glass card">
+              <button class="btn btn-sm" id="mealPrevDay">‹ Prev</button>
+              <div class="field inline"><input type="date" id="mealDate"></div>
+              <button class="btn btn-sm" id="mealNextDay">Next ›</button>
+              <button class="btn btn-sm" id="mealToday">Today</button>
+              <span class="spacer"></span>
+              <span class="chip" id="dailyTotalChip">0 meals</span>
+              <button class="btn btn-primary" id="btnSaveMeals">Save Entries</button>
+            </div>
+            <div class="card glass table-card">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th><th>Member</th><th>Room</th>
+                      <th class="col-check">Breakfast</th><th class="col-check">Lunch</th><th class="col-check">Dinner</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dailyBody"></tbody>
+                </table>
+              </div>
+              <div class="table-foot"><div class="table-info" id="dailyInfo">Tick the meals taken. Entries auto-save.</div></div>
+            </div>
+          </div>
+
+          <!-- Monthly -->
+          <div id="mealsMonthly" class="hidden">
+            <div class="toolbar glass card">
+              <div class="field inline"><input type="month" id="mealMonth"></div>
+              <span class="spacer"></span>
+              <span class="chip" id="monthlyRateChip">Rate: ৳ 0</span>
+              <button class="btn btn-sm" id="btnPrintMonthly">🖨 Print</button>
+            </div>
+            <div class="card glass table-card">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th><th>Member</th><th>Room</th>
+                      <th>Breakfast</th><th>Lunch</th><th>Dinner</th>
+                      <th>Guest</th><th>Total Meals</th><th>Meal Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody id="monthlyBody"></tbody>
+                </table>
+              </div>
+              <div class="table-foot"><div class="table-info" id="monthlyInfo"></div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ GUESTS ============ -->
+        <section id="page-guests" class="page hidden">
+          <div class="page-head">
+            <div>
+              <h2>Guest Meals</h2>
+              <p class="sub">গেস্ট খাবার — auto added to total meals</p>
+            </div>
+            <div class="page-actions no-print">
+              <button class="btn btn-primary" id="btnAddGuest">+ Add Guest Meal</button>
+            </div>
+          </div>
+
+          <div class="toolbar glass card">
+            <div class="field inline"><input type="search" id="guestSearch" placeholder="Search guest or member…"></div>
+            <div class="field inline"><input type="month" id="guestMonthFilter" title="Filter by month"></div>
+            <span class="spacer"></span>
+            <span class="chip" id="guestTotalChip">0 guest meals</span>
+          </div>
+
+          <div class="card glass table-card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>#</th><th>Date</th><th>Guest Name</th><th>Reference Member</th><th>Meals</th><th class="no-print">Actions</th></tr>
+                </thead>
+                <tbody id="guestBody"></tbody>
+              </table>
+            </div>
+            <div class="table-foot">
+              <div class="table-info" id="guestInfo"></div>
+              <div class="pagination" id="guestPagination"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ DEPOSITS ============ -->
+        <section id="page-deposits" class="page hidden">
+          <div class="page-head">
+            <div>
+              <h2>Deposit Management</h2>
+              <p class="sub">ডিপোজিট — জমা ও ইতিহাস</p>
+            </div>
+            <div class="page-actions no-print">
+              <button class="btn btn-primary" id="btnAddDeposit">+ Add Deposit</button>
+            </div>
+          </div>
+
+          <div class="toolbar glass card">
+            <div class="field inline"><input type="search" id="depositSearch" placeholder="Search member or note…"></div>
+            <div class="field inline"><select id="depositMemberFilter"><option value="all">All Members</option></select></div>
+            <div class="field inline"><input type="month" id="depositMonthFilter" title="Filter by month"></div>
+            <span class="spacer"></span>
+            <span class="chip" id="depositTotalChip">৳ 0</span>
+          </div>
+
+          <div class="card glass table-card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>#</th><th>Date</th><th>Member</th><th>Amount</th><th>Note</th><th class="no-print">Actions</th></tr>
+                </thead>
+                <tbody id="depositBody"></tbody>
+              </table>
+            </div>
+            <div class="table-foot">
+              <div class="table-info" id="depositInfo"></div>
+              <div class="pagination" id="depositPagination"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ EXPENSES ============ -->
+        <section id="page-expenses" class="page hidden">
+          <div class="page-head">
+            <div>
+              <h2>Expense Management</h2>
+              <p class="sub">খরচ — চাল, তেল, মুরগি, মাছ, সবজি, ইউটিলিটি</p>
+            </div>
+            <div class="page-actions no-print">
+              <button class="btn btn-primary" id="btnAddExpense">+ Add Expense</button>
+            </div>
+          </div>
+
+          <div class="stats-grid small" id="categoryStats"></div>
+
+          <div class="toolbar glass card">
+            <div class="field inline"><input type="search" id="expenseSearch" placeholder="Search note or category…"></div>
+            <div class="field inline"><select id="expenseCategoryFilter"><option value="all">All Categories</option></select></div>
+            <div class="field inline"><input type="month" id="expenseMonthFilter" title="Filter by month"></div>
+            <span class="spacer"></span>
+            <span class="chip" id="expenseTotalChip">৳ 0</span>
+          </div>
+
+          <div class="card glass table-card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>#</th><th>Date</th><th>Category</th><th>Amount</th><th>Note</th><th class="no-print">Actions</th></tr>
+                </thead>
+                <tbody id="expenseBody"></tbody>
+              </table>
+            </div>
+            <div class="table-foot">
+              <div class="table-info" id="expenseInfo"></div>
+              <div class="pagination" id="expensePagination"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ REPORTS ============ -->
+        <section id="page-reports" class="page hidden">
+          <div class="page-head">
+            <div>
+              <h2>Reports</h2>
+              <p class="sub">রিপোর্ট — export, print &amp; analyse</p>
+            </div>
+          </div>
+
+          <div class="tabs no-print">
+            <button class="tab active" data-report="monthly">Monthly Report</button>
+            <button class="tab" data-report="members">Member Wise</button>
+            <button class="tab" data-report="guests">Guest Report</button>
+            <button class="tab" data-report="expenses">Expense Report</button>
+            <button class="tab" data-report="deposits">Deposit Report</button>
+          </div>
+
+          <div class="toolbar glass card no-print">
+            <div class="field inline">
+              <select id="reportScope" title="Report period"></select>
+            </div>
+            <span class="spacer"></span>
+            <button class="btn btn-sm btn-primary" id="btnExportPdf">Export PDF</button>
+            <button class="btn btn-sm" id="btnExportExcel">Export Excel</button>
+            <button class="btn btn-sm" id="btnExportJson">Export JSON</button>
+            <button class="btn btn-sm" id="btnPrintReport">🖨 Print</button>
+          </div>
+
+          <div id="reportPrint" class="card glass report-area">
+            <div class="report-head">
+              <div>
+                <h3 id="reportMessName">My Mess</h3>
+                <p id="reportTitleLine">Monthly Report</p>
+              </div>
+              <div class="report-meta">
+                <span id="reportScopeLabel">—</span><br>
+                <span id="reportGenDate">—</span>
+              </div>
+            </div>
+            <div class="report-summary" id="reportSummary"></div>
+            <div class="table-wrap">
+              <table id="reportTable">
+                <thead id="reportHead"></thead>
+                <tbody id="reportBody"></tbody>
+              </table>
+            </div>
+            <p class="report-foot" id="reportFoot">Generated by MessPro — Bangladeshi Mess Management System</p>
+          </div>
+        </section>
+
+        <!-- ============ SETTINGS ============ -->
+        <section id="page-settings" class="page hidden">
+          <div class="page-head">
+            <div>
+              <h2>Settings</h2>
+              <p class="sub">সেটিংস — থিম, পাসওয়ার্ড, ব্যাকআপ</p>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <!-- Profile -->
+            <div class="card glass">
+              <h4>Mess Profile</h4>
+              <form id="profileForm">
+                <div class="field"><label for="settingsMessName">Mess Name</label><input type="text" id="settingsMessName" placeholder="e.g. Uttara Boys Mess"></div>
+                <div class="field"><label for="settingsManager">Manager Name</label><input type="text" id="settingsManager" placeholder="Manager name"></div>
+                <div class="field"><label for="settingsCurrency">Currency Symbol</label><input type="text" id="settingsCurrency" maxlength="4" placeholder="৳"></div>
+                <button type="submit" class="btn btn-primary">Save Profile</button>
+              </form>
+            </div>
+
+            <!-- Appearance -->
+            <div class="card glass">
+              <h4>Appearance</h4>
+              <div class="setting-row">
+                <div><strong>Dark Mode</strong><small class="sub">ডার্ক মোড টগল</small></div>
+                <label class="toggle"><input type="checkbox" id="settingsDarkToggle"><span class="slider"></span></label>
+              </div>
+              <div class="setting-row">
+                <div><strong>Auto Save</strong><small class="sub">Every change is stored instantly in LocalStorage</small></div>
+                <span class="badge badge-ok">Always On</span>
+              </div>
+              <div class="setting-row">
+                <div><strong>Storage Used</strong><small class="sub" id="storageInfo">—</small></div>
+                <span class="badge" id="storageBadge">0 KB</span>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="card glass">
+              <h4>Change Password</h4>
+              <form id="settingsPasswordForm">
+                <div class="field"><label for="setPwCurrent">Current Password</label><input type="password" id="setPwCurrent" required></div>
+                <div class="field"><label for="setPwNew">New Password</label><input type="password" id="setPwNew" minlength="4" required></div>
+                <div class="field"><label for="setPwConfirm">Confirm New Password</label><input type="password" id="setPwConfirm" minlength="4" required></div>
+                <button type="submit" class="btn btn-primary">Update Password</button>
+              </form>
+            </div>
+
+            <!-- Backup -->
+            <div class="card glass">
+              <h4>Backup &amp; Restore</h4>
+              <p class="sub">সব ডেটা LocalStorage-এ থাকে। নিয়মিত JSON ব্যাকআপ নিন।</p>
+              <div class="btn-row">
+                <button class="btn" id="btnBackup">⬇ Backup JSON</button>
+                <button class="btn" id="btnRestore">⬆ Restore JSON</button>
+                <input type="file" id="restoreFile" accept="application/json,.json" class="hidden">
+              </div>
+              <div class="btn-row">
+                <button class="btn" id="btnSample">✨ Load Sample Data</button>
+                <button class="btn btn-danger" id="btnReset">🗑 Reset All Data</button>
+              </div>
+              <div class="data-stats" id="settingsStats"></div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Member Modal -->
+  <div class="modal-overlay" id="memberModal" aria-hidden="true">
+    <div class="modal glass" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 id="memberModalTitle">Add Member</h3>
+        <button class="icon-btn" data-close="memberModal">✕</button>
+      </div>
+      <form id="memberForm">
+        <div class="modal-body">
+          <input type="hidden" id="memberId">
+          <div class="grid-2">
+            <div class="field"><label for="memberName">Full Name <span class="req">*</span></label><input type="text" id="memberName" placeholder="e.g. Rahim Uddin" required></div>
+            <div class="field"><label for="memberPhone">Phone</label><input type="tel" id="memberPhone" placeholder="01XXXXXXXXX" pattern="[0-9+\-\s]{6,20}"></div>
+            <div class="field"><label for="memberRoom">Room Number</label><input type="text" id="memberRoom" placeholder="e.g. 101"></div>
+            <div class="field"><label for="memberSeatRent">Seat Rent (৳) <span class="req">*</span></label><input type="number" id="memberSeatRent" min="0" step="1" placeholder="3500" required></div>
+            <div class="field"><label for="memberDeposit">Deposit Amount (৳)</label><input type="number" id="memberDeposit" min="0" step="1" placeholder="0"><small class="sub">Changing this creates an adjustment deposit.</small></div>
+            <div class="field"><label for="memberJoined">Joined Date</label><input type="date" id="memberJoined"></div>
+            <div class="field"><label for="memberStatus">Status</label>
+              <select id="memberStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn" data-close="memberModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Member</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Guest Modal -->
+  <div class="modal-overlay" id="guestModal" aria-hidden="true">
+    <div class="modal glass" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 id="guestModalTitle">Add Guest Meal</h3>
+        <button class="icon-btn" data-close="guestModal">✕</button>
+      </div>
+      <form id="guestForm">
+        <div class="modal-body">
+          <input type="hidden" id="guestId">
+          <div class="grid-2">
+            <div class="field"><label for="guestName">Guest Name <span class="req">*</span></label><input type="text" id="guestName" placeholder="e.g. Sohel Rana" required></div>
+            <div class="field"><label for="guestMember">Reference Member <span class="req">*</span></label><select id="guestMember" required></select></div>
+            <div class="field"><label for="guestCount">Guest Meal Count <span class="req">*</span></label><input type="number" id="guestCount" min="1" step="1" value="1" required></div>
+            <div class="field"><label for="guestDate">Guest Date</label><input type="date" id="guestDate" required></div>
+          </div>
+          <p class="sub">Guest meals automatically join total meals for meal-rate calculation.</p>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn" data-close="guestModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Guest Meal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Deposit Modal -->
+  <div class="modal-overlay" id="depositModal" aria-hidden="true">
+    <div class="modal glass" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 id="depositModalTitle">Add Deposit</h3>
+        <button class="icon-btn" data-close="depositModal">✕</button>
+      </div>
+      <form id="depositForm">
+        <div class="modal-body">
+          <input type="hidden" id="depositId">
+          <div class="grid-2">
+            <div class="field"><label for="depositMember">Member <span class="req">*</span></label><select id="depositMember" required></select></div>
+            <div class="field"><label for="depositAmount">Amount (৳) <span class="req">*</span></label><input type="number" id="depositAmount" min="1" step="1" placeholder="5000" required></div>
+            <div class="field"><label for="depositDate">Deposit Date</label><input type="date" id="depositDate" required></div>
+            <div class="field"><label for="depositNote">Note</label><input type="text" id="depositNote" placeholder="e.g. Monthly deposit"></div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn" data-close="depositModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Deposit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Expense Modal -->
+  <div class="modal-overlay" id="expenseModal" aria-hidden="true">
+    <div class="modal glass" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 id="expenseModalTitle">Add Expense</h3>
+        <button class="icon-btn" data-close="expenseModal">✕</button>
+      </div>
+      <form id="expenseForm">
+        <div class="modal-body">
+          <input type="hidden" id="expenseId">
+          <div class="grid-2">
+            <div class="field"><label for="expenseCategory">Category <span class="req">*</span></label><select id="expenseCategory" required></select></div>
+            <div class="field"><label for="expenseAmount">Amount (৳) <span class="req">*</span></label><input type="number" id="expenseAmount" min="1" step="1" placeholder="2500" required></div>
+            <div class="field"><label for="expenseDate">Expense Date</label><input type="date" id="expenseDate" required></div>
+            <div class="field"><label for="expenseNote">Note</label><input type="text" id="expenseNote" placeholder="e.g. 25kg rice from Karim Store"></div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn" data-close="expenseModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Expense</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Password Modal (from login) -->
+  <div class="modal-overlay" id="passwordModal" aria-hidden="true">
+    <div class="modal glass" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>Change Password</h3>
+        <button class="icon-btn" data-close="passwordModal">✕</button>
+      </div>
+      <form id="loginPasswordForm">
+        <div class="modal-body">
+          <div class="field"><label for="pwCurrent">Current Password</label><input type="password" id="pwCurrent" required></div>
+          <div class="field"><label for="pwNew">New Password</label><input type="password" id="pwNew" minlength="4" required></div>
+          <div class="field"><label for="pwConfirm">Confirm New Password</label><input type="password" id="pwConfirm" minlength="4" required></div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn" data-close="passwordModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="confirmModal" aria-hidden="true">
+    <div class="modal glass modal-sm" role="alertdialog" aria-modal="true">
+      <div class="modal-head">
+        <h3 id="confirmTitle">Are you sure?</h3>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMessage">This action cannot be undone.</p>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn" id="confirmCancelBtn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmOkBtn">Yes, Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toasts -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+</body>
+</html>
